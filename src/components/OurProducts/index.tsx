@@ -2,13 +2,33 @@ import { ProductCard } from '../ProductCard'
 import { TitleText } from '../Typography'
 import { ProductList, OurProductsContainer } from './styles'
 
-import { products } from '../../mock/products'
+import { productsMock } from '../../mock/products'
 import { Input } from '../Input'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+interface Product {
+  id: number,
+  tags: string,
+  name: string,
+  description: string,
+  img: string,
+  price: number,
+}
 
 export function OurProducts() {
   const [nameSearch, setNameSearch] = useState('');
   const [tagSearch, setTagSearch] = useState('all');
+  const [products, setProducts] = useState<Product[]>(productsMock);
+  
+  useEffect(() => {
+    async function test() {
+      const response = await fetch('http://macbook-air-de-leonardo.local/pizza/api-stock')
+      const productsApi = await response.json();
+      setProducts(productsApi)
+   }
+ 
+   test()
+  }, [])
 
   return (
     <OurProductsContainer className="container">
@@ -39,7 +59,7 @@ export function OurProducts() {
         {products.map((product) => (
           nameSearch == '' ? (
             (tagSearch != 'all') ? (
-              product.tags.map((tag) => 
+              product.tags.split(",").map((tag) => 
                 (tagSearch == tag) && <ProductCard key={product.id} product={product} />
               )
             ) : (
@@ -47,7 +67,7 @@ export function OurProducts() {
             )
           ) : (
             (tagSearch != 'all') ? (
-              product.tags.map((tag) => 
+              product.tags.split(",").map((tag) => 
                 (tagSearch == tag && product.name.toLowerCase().includes(nameSearch.toLowerCase())) && <ProductCard key={product.id} product={product} />
               )
             ) : (

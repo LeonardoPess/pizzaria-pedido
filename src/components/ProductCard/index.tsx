@@ -14,10 +14,10 @@ import { useState } from 'react'
 
 export interface Product {
   id: number
-  tags: string[]
+  tags: string
   name: string
   description: string
-  photo: string
+  img: string
   price: number
 }
 
@@ -55,10 +55,10 @@ export function ProductCard({ product }: ProductProps) {
 
   return (
     <ProductCardContainer>
-      <img src={`/products/${product.photo}`} alt="" />
+      <img src={product.img} alt="" />
 
       <Tags>
-        {product.tags.map((tag) => (
+        {product.tags.split(",").map((tag) => (
           <span key={tag}>{tag}</span>
         ))}
       </Tags>

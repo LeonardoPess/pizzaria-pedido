@@ -80,6 +80,15 @@ export function ProductCartPrint({ state }: LocationType) {
       <br />
       <hr />
       <br />
+      <p style={{fontSize: '1.2rem', textAlign: 'center'}}>Observação:</p>
+      <RegularText>
+        <strong>
+          {state.observation}
+        </strong>
+      </RegularText>
+      <br />
+      <hr />
+      <br />
       <RegularText>
         Sub total: {' '}
         <strong>

@@ -108,7 +108,7 @@ export function OrderConfirmedPage() {
             )}
           />
 
-          <div ref={ref}>
+          <div ref={ref} style={{padding: '1rem'}}>
             <ProductCartPrint state={state} />
           </div>
         </OrderDetailsContainer>
