@@ -25,7 +25,7 @@ export function OrderConfirmedPage() {
 
   const navigate = useNavigate()
 
-  const ref = useRef<HTMLDivElement>();
+  const ref = useRef<any>();
 
   useEffect(() => {
     if (!state) {
