@@ -27,7 +27,7 @@ export function OurProducts() {
       setProducts(productsApi)
    }
  
-   test()
+   //test()
   }, [])
 
   return (
