@@ -61,6 +61,18 @@ export function ProductCartPrint({ state }: LocationType) {
       <br />
       <hr />
       <br />
+      <p style={{fontSize: '1.2rem', textAlign: 'center'}}>Observação:</p>
+      <br />
+      <hr />
+      <br />
+      <RegularText>
+        <strong>
+          {state.observation}
+        </strong>
+      </RegularText>
+      <br />
+      <hr />
+      <br />
       <table style={{width: '100%',textAlign:'left'}}>
         <thead>
           <th>Pedido</th>
@@ -77,15 +89,6 @@ export function ProductCartPrint({ state }: LocationType) {
           ))}
         </tbody>
       </table>
-      <br />
-      <hr />
-      <br />
-      <p style={{fontSize: '1.2rem', textAlign: 'center'}}>Observação:</p>
-      <RegularText>
-        <strong>
-          {state.observation}
-        </strong>
-      </RegularText>
       <br />
       <hr />
       <br />
