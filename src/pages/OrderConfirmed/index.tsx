@@ -13,12 +13,14 @@ import { paymentMethods } from '../CompleteOrder/components/CompleteOrderForm/Pa
 import { useEffect, useRef } from 'react'
 import { Button } from '../../components/Button'
 import { ProductCartPrint } from './ProductCartPrint';
+import { useCart } from '../../hooks/useCart';
 
 interface LocationType {
   state: OrderData
 }
 
 export function OrderConfirmedPage() {
+  const { cleanCart } = useCart()
   const { colors } = useTheme()
 
   const { state } = useLocation() as LocationType
@@ -34,6 +36,11 @@ export function OrderConfirmedPage() {
   }, [])
 
   if (!state) return <></>
+
+  function finishOrder() {
+    cleanCart()
+    navigate('/')
+  }
 
   return (
     <OrderConfirmedContainer className="container">
@@ -76,7 +83,7 @@ export function OrderConfirmedPage() {
             }
           />
 
-          <InfoWithIcon
+          {/* <InfoWithIcon
             icon={<Clock weight="fill" />}
             iconColor={colors['brand-yellow']}
             text={
@@ -86,7 +93,7 @@ export function OrderConfirmedPage() {
                 <strong>20 min - 30 min</strong>
               </RegularText>
             }
-          />
+          /> */}
 
           <InfoWithIcon
             icon={<CurrencyDollar weight="fill" />}
@@ -104,11 +111,13 @@ export function OrderConfirmedPage() {
             bodyClass="print-agreement"
             content={() => ref.current}
             trigger={() => (
-              <Button type="button" text="Imprimir pedido"/>
+              <Button type="button" text="Imprimir comanda" onLoad={(e) => {e.currentTarget.click()}}/>
             )}
           />
+  
+          <Button type="button" text="Concluir" onClick={() => finishOrder()}/>
 
-          <div ref={ref} style={{padding: '1rem'}}>
+          <div ref={ref} style={{padding: '1rem'}} className='printOrderContainer'>
             <ProductCartPrint state={state} />
           </div>
         </OrderDetailsContainer>

@@ -4,15 +4,18 @@ import { TitleText } from '../../../../components/Typography'
 import { SectionTitle } from '../SectionTitle'
 import { AddressForm } from './AddressForm'
 import { PaymentMethodOptions } from './PaymentMethodOptions'
-import { CompleteOrderFormContainer, DeliveryMethodOptionsContainer, FormSectionContainer, PaymentMethodOptionsContainer } from './styles'
+import { CompleteOrderFormContainer, FormSectionContainer } from './styles'
 import { useState } from 'react'
 import { DeliveryMethodOptions } from './DeliveryMethodOptions'
 import { ObservationForm } from './ObservationForm'
 import { CustomerForm } from './CustomerForm'
+import { useDelivery } from '../../../../hooks/useDelivery'
 
 export function CompleteOrderForm() {
-  const [isDelivery, setIsDelivery] = useState(true);
+  const { isDelivery }  = useDelivery();
+  const [customer, setCustomer] = useState<any>();
   const { colors } = useTheme()
+
 
   return (
     <CompleteOrderFormContainer>
@@ -27,11 +30,11 @@ export function CompleteOrderForm() {
           icon={<IdentificationCard color={colors['brand-purple']} size={22} />}
         />
 
-        <CustomerForm />
+        <CustomerForm customer={customer} setCustomer={setCustomer}/>
       </FormSectionContainer>
 
       <FormSectionContainer>
-        <DeliveryMethodOptions setIsDelivery={setIsDelivery}/>
+        <DeliveryMethodOptions />
 
         {isDelivery && (
           <>
@@ -41,7 +44,7 @@ export function CompleteOrderForm() {
               icon={<MapPinLine color={colors['brand-yellow-dark']} size={22} />}
             />
     
-            <AddressForm />
+            <AddressForm customer={customer}  />
           </>
         )}
 

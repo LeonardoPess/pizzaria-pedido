@@ -24,6 +24,16 @@ export const OrderConfirmedContainer = styled.div`
       flex-direction: column;
     }
   }
+
+  .printOrderContainer {
+    display: none;
+  }
+
+  @media print { 
+    .printOrderContainer {
+      display: block;
+    }
+  } 
 `
 
 export const OrderDetailsContainer = styled.div`

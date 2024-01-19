@@ -11,6 +11,7 @@ import {
 import { ShoppingCart } from 'phosphor-react'
 import { useCart } from '../../hooks/useCart'
 import { useState } from 'react'
+import { formatMoney } from '../../utils/formatMoney'
 
 export interface Product {
   id: number
@@ -23,9 +24,10 @@ export interface Product {
 
 interface ProductProps {
   product: Product
+  isHalf: boolean
 }
 
-export function ProductCard({ product }: ProductProps) {
+export function ProductCard({ product, isHalf }: ProductProps) {
   const { addProductToCart } = useCart()
 
   const [quantity, setQuantity] = useState(1)
@@ -38,9 +40,13 @@ export function ProductCard({ product }: ProductProps) {
     setQuantity((state) => state - 1)
   }
 
+  if (!product.tags.includes("pizza")) isHalf = false;
+
   function handleAddToCart() {
     const productToAdd = {
       ...product,
+      name: isHalf ? product.name + ' 1/2' : product.name,
+      price: isHalf ? Number((product.price / 2).toFixed(2)) : product.price,
       quantity,
     }
 
@@ -49,9 +55,7 @@ export function ProductCard({ product }: ProductProps) {
     setQuantity(1)
   }
 
-  const formattedPrice = product.price.toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-  })
+  const formattedPrice = isHalf ? formatMoney(Number((product.price / 2).toFixed(2))) : formatMoney(Number(product.price))
 
   return (
     <ProductCardContainer>
@@ -63,7 +67,7 @@ export function ProductCard({ product }: ProductProps) {
         ))}
       </Tags>
 
-      <Name>{product.name}</Name>
+      <Name>{product.name} {isHalf && "1/2"}</Name>
       <Description>{product.description}</Description>
 
       <CardFooter>

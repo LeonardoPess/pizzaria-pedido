@@ -5,6 +5,7 @@ import { ProductList, OurProductsContainer } from './styles'
 import { productsMock } from '../../mock/products'
 import { Input } from '../Input'
 import { useEffect, useState } from 'react'
+import { Button } from '../Button'
 
 interface Product {
   id: number,
@@ -19,15 +20,16 @@ export function OurProducts() {
   const [nameSearch, setNameSearch] = useState('');
   const [tagSearch, setTagSearch] = useState('all');
   const [products, setProducts] = useState<Product[]>(productsMock);
-  
+  const [isHalf, setIsHalf] = useState(false);
+
   useEffect(() => {
-    async function test() {
-      const response = await fetch('http://macbook-air-de-leonardo.local/pizza/api-stock')
+    async function fetchProducts() {
+      const response = await fetch('https://pizzaria-back.pessoa.tech/api-stock')
       const productsApi = await response.json();
       setProducts(productsApi)
    }
  
-   //test()
+   fetchProducts()
   }, [])
 
   return (
@@ -39,6 +41,11 @@ export function OurProducts() {
         </TitleText>
 
         <div>
+          <Button
+            text={'Metade'}
+            style={{margin: '0', background: isHalf ? '#4B2995' : '#D7D5D5', color: isHalf ? '#FFFFFF' : '#4B2995'}}
+            onClick={() => setIsHalf(!isHalf)}
+          />
           <Input
             placeholder="Pesquisar"
             type="search"
@@ -49,7 +56,12 @@ export function OurProducts() {
           <select name="tags" id="tags" onChange={(e) => setTagSearch(e.target.value)}>
             <option value="all">Todos</option>
             <option value="pizza">Pizzas</option>
+            <option value="promoção">Promoção</option>
             <option value="doce">Doces</option>
+            <option value="meio a meio">Meio a meio</option>
+            <option value="tradicional">Tradicional</option>
+            <option value="gourmet">Gourmet</option>
+            <option value="borda">Bordas</option>
             <option value="bebida">Bebidas</option>
           </select>
         </div>
@@ -60,18 +72,18 @@ export function OurProducts() {
           nameSearch == '' ? (
             (tagSearch != 'all') ? (
               product.tags.split(",").map((tag) => 
-                (tagSearch == tag) && <ProductCard key={product.id} product={product} />
+                (tagSearch == tag.trim()) && <ProductCard key={product.id} product={product} isHalf={isHalf} />
               )
             ) : (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} isHalf={isHalf} />
             )
           ) : (
             (tagSearch != 'all') ? (
               product.tags.split(",").map((tag) => 
-                (tagSearch == tag && product.name.toLowerCase().includes(nameSearch.toLowerCase())) && <ProductCard key={product.id} product={product} />
+                (tagSearch == tag.trim() && product.name.toLowerCase().includes(nameSearch.toLowerCase())) && <ProductCard key={product.id} product={product} isHalf={isHalf} />
               )
             ) : (
-              product.name.toLowerCase().includes(nameSearch.toLowerCase()) && <ProductCard key={product.id} product={product} />
+              product.name.toLowerCase().includes(nameSearch.toLowerCase()) && <ProductCard key={product.id} product={product} isHalf={isHalf} />
             )
             )
         ))}

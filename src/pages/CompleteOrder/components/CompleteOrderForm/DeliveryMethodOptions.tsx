@@ -2,10 +2,7 @@ import { Car, PersonSimpleWalk } from 'phosphor-react'
 import { DeliveryMethodOptionsContainer } from './styles'
 import { useFormContext } from 'react-hook-form'
 import { DeliveryMethodInput } from '../DeliveryMethodInput'
-
-interface DeliveryMethodOptionsProps{
-  setIsDelivery: (isDelivery: boolean) => void
-}
+import { useDelivery } from '../../../../hooks/useDelivery'
 
 const deliveryOptions = {
   delivery: {
@@ -18,12 +15,13 @@ const deliveryOptions = {
   }
 }
 
-export function DeliveryMethodOptions({ setIsDelivery }: DeliveryMethodOptionsProps) {
+export function DeliveryMethodOptions() {
+  const { hasDelivery }  = useDelivery();
+
   const {
     register,
     formState: { errors },
   } = useFormContext()
-
 
   return (
     <DeliveryMethodOptionsContainer>
@@ -34,7 +32,7 @@ export function DeliveryMethodOptions({ setIsDelivery }: DeliveryMethodOptionsPr
           icon={icon}
           label={label}
           value={key}
-          onClick={() => setIsDelivery(label == 'Delivery' ? true : false)}
+          onClick={() => hasDelivery(label == 'Delivery' ? true : false)}
           {...register('deliveryMethod')}
         />
       ))}

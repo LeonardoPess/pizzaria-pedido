@@ -1,87 +1,108 @@
-import { RegularText } from '../../../components/Typography'
 import { useCart } from '../../../hooks/useCart'
 import { formatMoney } from '../../../utils/formatMoney'
 import { OrderData } from '../../CompleteOrder'
+import { paymentMethods } from '../../CompleteOrder/components/CompleteOrderForm/PaymentMethodOptions'
+import { useDelivery } from '../../../hooks/useDelivery'
+import { useEffect, useState } from 'react'
+import { ProductCartPrintContainer } from './styles'
+
 
 interface LocationType {
   state: OrderData
 }
 
-const DELIVERY_PRICE = 3.5
+const ORDER_NUMBER_STORAGE_KEY = 'ProductDelivery:orderNumber'
 
 export function ProductCartPrint({ state }: LocationType) {
-  const { cartItemsTotal, cartQuantity, cartItems } = useCart()
+  const [orderNumber, setOrderNumber] = useState(() => {
+    const storedOrderNumber = localStorage.getItem(ORDER_NUMBER_STORAGE_KEY)
 
-  const cartTotal = DELIVERY_PRICE + cartItemsTotal
+    if (storedOrderNumber) {
+      return JSON.parse(storedOrderNumber)
+    }
 
-  const formattedDeliveryPrice = formatMoney(DELIVERY_PRICE)
-  const formattedCartTotal = formatMoney(cartTotal)
+    return 0;
+  })
+
+  useEffect(() => {
+    localStorage.setItem(ORDER_NUMBER_STORAGE_KEY, JSON.stringify(orderNumber + 1))
+  }, [orderNumber])
+
+  const { cartItemsTotal, cartItems } = useCart()
+  const { deliveryPrice } = useDelivery()
+
+  const formattedCartTotal = formatMoney(cartItemsTotal)
 
   const d = new Date
   const dformat = [
-        d.getDate(),
-        d.getMonth()+1,
+        String(d.getDate()).padStart(2, '0'),
+        String(d.getMonth()+1).padStart(2, '0'),
         d.getFullYear()].join('/')+' '+
-        [d.getHours(),
-        d.getMinutes(),
-        d.getSeconds()].join(':');  
+        [String(d.getHours()).padStart(2, '0'),
+        String(d.getMinutes()).padStart(2, '0')].join(':');  
 
   return (
-    <>
-      <RegularText>{dformat}</RegularText>
+    <ProductCartPrintContainer>
+      <p>{dformat}</p>
       <strong>Pizzaria manah</strong>
       <br />
       <br />
       <hr />
-      <p style={{fontSize: '1.5rem', textAlign: 'center'}}>ENTREGA: 187</p>
+      <p style={{fontSize: '1.5rem', textAlign: 'center'}}>PEDIDO {orderNumber}</p>
       <hr />
       <br />
-      <RegularText>
+      <p>
         Cliente: {' '}
         <strong>
           {state.name}
         </strong>
-      </RegularText>
+      </p>
       {state.deliveryMethod == 'comeGet' ? (
-          <RegularText><strong>Vem buscar</strong></RegularText>
+          <p><strong>Vem buscar</strong></p>
         ) : (
-          <RegularText>
+          <p>
             Endereço: {' '}
             <strong>
               {state.district}, {state.street}, {state.number}
             </strong>
-          </RegularText>
+          </p>
         )}
-      <RegularText>
+      <p>
         Telefone: {' '}
         <strong>
           {state.phone}
         </strong>
-      </RegularText>
+      </p>
       <br />
-      <hr />
-      <br />
-      <p style={{fontSize: '1.2rem', textAlign: 'center'}}>Observação:</p>
-      <br />
-      <hr />
-      <br />
-      <RegularText>
-        <strong>
-          {state.observation}
-        </strong>
-      </RegularText>
-      <br />
+
+      {state.observation && (
+        <>
+        <hr />
+        <br />
+        <p style={{fontSize: '1.2rem', textAlign: 'center'}}>Observação:</p>
+        <br />
+        <hr />
+        <br />
+        <p>
+          <strong>
+            {state.observation}
+          </strong>
+        </p>
+        <br />
+        </>
+      )}
+      
       <hr />
       <br />
       <table style={{width: '100%',textAlign:'left'}}>
         <thead>
-          <th>Pedido</th>
-          <th>Qtd.</th>
-          <th>valor</th>
+          <td>Pedido</td>
+          <td>Qtd.</td>
+          <td>valor</td>
         </thead>
         <tbody>
           {cartItems.map((product) => (
-            <tr>
+            <tr key={product.id}>
               <td>{product.name}</td>
               <td>{product.quantity}</td>
               <td>{formatMoney(product.price * product.quantity)}</td>
@@ -92,30 +113,35 @@ export function ProductCartPrint({ state }: LocationType) {
       <br />
       <hr />
       <br />
-      <RegularText>
+      <p>
         Sub total: {' '}
         <strong>
-          {formattedCartTotal}
+          R$ {formattedCartTotal}
         </strong>
-      </RegularText>
-      <RegularText>
-        Taxa da entrega: {' '}
-        <strong>
-          {formattedDeliveryPrice}
-        </strong>
-      </RegularText>
-      <RegularText>
+      </p>
+      {state.deliveryMethod != 'comeGet' && (
+        <p>
+          Taxa da entrega: {' '}
+          <strong>
+            R$ {formatMoney(deliveryPrice)}
+          </strong>
+        </p>
+      )}
+
+      <p>
         Total: {' '}
         <strong>
-          {formatMoney(cartTotal + DELIVERY_PRICE)}
+          R$ {formatMoney(cartItemsTotal + deliveryPrice)}
         </strong>
-      </RegularText>
-      <RegularText>
+      </p>
+      <p>
         Forma de pagamento: {' '}
         <strong>
-          {state.paymentMethod}
+          {paymentMethods[state.paymentMethod].label}
         </strong>
-      </RegularText>
-    </>
+      </p>
+      <br />
+      <br />
+    </ProductCartPrintContainer>
   )
 }
